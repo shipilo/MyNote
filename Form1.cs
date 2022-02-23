@@ -1,12 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MyNote
@@ -68,6 +62,16 @@ namespace MyNote
 
         private void открытьToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (!saved)
+            {
+                string message = "Вы хотите сохранить изменения в файле " + path + " ?";
+                if (path == "") message = "Вы хотите сохранить изменения в новом файле?";
+                DialogResult dialogResult = MessageBox.Show(message, "MyNote", MessageBoxButtons.YesNoCancel);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    сохранитьToolStripMenuItem_Click(null, null);
+                }
+            }
             try
             {
                 OpenFileDialog fileDialog = new OpenFileDialog();
@@ -78,8 +82,10 @@ namespace MyNote
                     rtbField.Text = sr.ReadToEnd();
                     sr.Close();
                     path = fileDialog.FileName;
+                    this.Text = "MyNote - " + path;
                     opend = true;
                     saved = true;
+                    tsLabel.Text = "Saved";
                 }
             }
             catch (Exception exc)
@@ -98,6 +104,7 @@ namespace MyNote
                     sw.Write(rtbField.Text);
                     sw.Close();
                     saved = true;
+                    tsLabel.Text = "Saved";
                 }
                 else
                 {
@@ -116,7 +123,10 @@ namespace MyNote
                         sw.Write(rtbField.Text);
                         sw.Close();
                         path = fileDialog.FileName;
+                        this.Text = "MyNote - " + path;
+                        opend = true;
                         saved = true;
+                        tsLabel.Text = "Saved";
                     }
                 }
                 catch (Exception exc)
@@ -147,6 +157,7 @@ namespace MyNote
         private void rtbField_TextChanged(object sender, EventArgs e)
         {
             saved = false;
+            tsLabel.Text = "Unsaved";
         }
 
         private void выделитьToolStripMenuItem_Click(object sender, EventArgs e)
@@ -244,16 +255,6 @@ namespace MyNote
             Form2 form2 = new Form2();
             form2.Location = this.Location;
             form2.Show();
-        }
-
-        private void увеличитьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rtbField.ZoomFactor++;
-        }
-
-        private void уменьшитьToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rtbField.ZoomFactor--;
         }
 
         private void жирныйToolStripMenuItem_Click(object sender, EventArgs e)
